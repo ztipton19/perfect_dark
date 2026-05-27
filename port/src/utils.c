@@ -29,6 +29,7 @@ static inline bool isSingleCharToken(const s32 ch)
 
 char *strFmt(const char *fmt, ...)
 {
+	// WARNING: returns a static buffer; do NOT use in nested calls like foo(strFmt("a"), strFmt("b"))
 	static char buf[4096];
 
 	va_list ap;

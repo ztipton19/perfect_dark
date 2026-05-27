@@ -350,9 +350,10 @@ static inline void romdataInitFiles(void)
 
 	// the file offset table is in the data seg
 	const u32 *offsets = (u32 *)(romDataSeg + ROMDATA_FILES_OFS);
+	const u32 *offsetsEnd = (u32 *)(romDataSeg + romDataSegSize);
 	u32 i;
-	for (i = 1; offsets[i]; ++i) {
-		if (offsets + i + 1 < (u32 *)(romDataSeg + romDataSegSize)) {
+	for (i = 1; offsets + i < offsetsEnd && PD_BE32(offsets[i]); ++i) {
+		if (offsets + i + 1 < offsetsEnd) {
 			const u32 nextofs = PD_BE32(offsets[i + 1]);
 			const u32 ofs = PD_BE32(offsets[i]);
 			fileSlots[i].data = g_RomFile + ofs;
@@ -363,8 +364,17 @@ static inline void romdataInitFiles(void)
 	}
 
 	// last offset is to the name table
-	const u32 *nameOffsets = (u32 *)(g_RomFile + PD_BE32(offsets[i - 1]));
-	for (i = 1; nameOffsets[i]; ++i) {
+	const u32 nameTableOfs = PD_BE32(offsets[i - 1]);
+	if (nameTableOfs + sizeof(u32) > g_RomFileSize) {
+		sysFatalError("Name table offset points past end of ROM.");
+	}
+	const u32 *nameOffsets = (u32 *)(g_RomFile + nameTableOfs);
+	const u32 *nameOffsetsEnd = (u32 *)(g_RomFile + g_RomFileSize);
+	for (i = 1; nameOffsets + i < nameOffsetsEnd && PD_BE32(nameOffsets[i]); ++i) {
+		if (i >= ROMDATA_MAX_FILES) {
+			sysLogPrintf(LOG_WARNING, "romdataInitFiles: exceeded max files (%d), truncating", ROMDATA_MAX_FILES);
+			break;
+		}
 		const u32 ofs = PD_BE32(nameOffsets[i]);
 		fileSlots[i].name = (const char *)nameOffsets + ofs; // ofs is relative to the start of the name table
 	}

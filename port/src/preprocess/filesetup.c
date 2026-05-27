@@ -97,6 +97,9 @@ static inline u32 objSizeN64(struct n64_defaultobj *obj)
 	case OBJTYPE_PADEFFECT:          return sizeof(struct padeffectobj) / sizeof(u32);
 	case OBJTYPE_MINE:               return sizeof(struct n64_weaponobj) / sizeof(u32);
 	case OBJTYPE_ESCASTEP:           return sizeof(struct n64_escalatorobj) / sizeof(u32);
+	default:
+		sysLogPrintf(LOG_WARNING, "objSizeN64: unknown object type 0x%02x, defaulting to 1", obj->type);
+		return 1;
 	}
 
 	return 1;

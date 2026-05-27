@@ -69,8 +69,8 @@ static inline void sysLogSetPath(const char *fname)
 	if (!f) {
 		// try home dir
 		sysGetHomePath(logPath, sizeof(logPath) - 1);
-		strncat(logPath, "/", sizeof(logPath) - 1);
-		strncat(logPath, fname, sizeof(logPath) - 1);
+		strncat(logPath, "/", sizeof(logPath) - strlen(logPath) - 1);
+		strncat(logPath, fname, sizeof(logPath) - strlen(logPath) - 1);
 		f = fopen(logPath, "wb");
 	}
 	if (f) {

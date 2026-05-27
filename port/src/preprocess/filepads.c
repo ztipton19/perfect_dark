@@ -51,7 +51,10 @@ static u32 convertPads(u8 *dst, u32 dstpos, u8 *src, u32 srcpos, int num_pads)
 	for (int i = 0; i < num_pads; i++) {
 		srcpos = PD_BE16(src_offsets[i]);
 
-		dst_offsets[i] = (dstpos);
+		if (dstpos > 0xffff) {
+			sysLogPrintf(LOG_WARNING, "convertPads: offset %u exceeds u16 range, truncating", dstpos);
+		}
+		dst_offsets[i] = (u16)(dstpos & 0xffff);
 
 		// Header
 		u32 n64_padheader = PD_BE32(*(u32 *) &src[srcpos]);

@@ -1076,7 +1076,7 @@ u8 *preprocessModelFile(u8 *data, u32 size, u32 *outSize)
 	gbiReset();
 
 	u32 newSizeEstimated = romdataFileGetEstimatedSize(size, LOADTYPE_MODEL);
-	u8 *dst = sysMemZeroAlloc(newSizeEstimated);
+	u8 *dst = sysMemZeroAlloc(newSizeEstimated + 128);
 
 	u32 newSize = convertModel(dst, data, size);
 

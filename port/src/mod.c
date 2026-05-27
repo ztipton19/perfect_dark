@@ -108,9 +108,9 @@ static inline char *modConfigParseFloatValue(char *p, char *token, f32 *out)
 static char *modConfigParseStageMusic(char *p, char *token, s32 stagenum)
 {
 	struct stagemusic *smus = NULL;
-	for (struct stagemusic *p = g_StageTracks; p->stagenum; ++p) {
-		if (p->stagenum == stagenum) {
-			smus = p;
+	for (struct stagemusic *sm = g_StageTracks; sm->stagenum; ++sm) {
+		if (sm->stagenum == stagenum) {
+			smus = sm;
 			break;
 		}
 	}

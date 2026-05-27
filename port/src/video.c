@@ -334,12 +334,16 @@ s32 videoGetNumDisplayModes(void)
 
 void videoSetDisplayMode(const s32 index)
 {
-	const displaymode dm = vidModes[index];
+	if (index < 0 || index >= vidNumModes) {
+		return;
+	}
 
 	if (index == 0) {
 		// "Custom" video mode.
 		return;
 	}
+
+	const displaymode dm = vidModes[index];
 
 	vidWidth = dm.width;
 	vidHeight = dm.height;
